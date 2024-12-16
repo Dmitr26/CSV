@@ -58,9 +58,9 @@ const dataCSV = `44.38,34.33,Алушта,31440,
 
 function getCSV(data) {
 
-    let rating = 1;
-    let cities = data.split(",\n")
-        .filter(string => !(string.trim() === "" || string.includes("#") || string.includes(",,")))
+    let cities = data.split("\n")
+        .filter(string => string.trim() !== "" && !string.includes("#") && !string.includes(",,"))
+        .map(string => string.slice(0, -1))
         .map(string => string.split(","))
         .map(array => ({
             x: array[0],
@@ -71,7 +71,7 @@ function getCSV(data) {
         .sort((a, b) => b.population - a.population)
         .slice(0, 10)
         .reduce(
-            (obj, item) => Object.assign(obj, { [item.name]: { population: item.population, rating: rating++ } }), {});
+            (obj, item, index) => Object.assign(obj, { [item.name]: { population: item.population, rating: index + 1 } }), {});
 
     return (text) => {
 
