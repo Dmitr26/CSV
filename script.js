@@ -59,8 +59,7 @@ const dataCSV = `44.38,34.33,Алушта,31440,
 function getCSV(data) {
 
     let cities = data.split("\n")
-        .filter(string => string.trim() !== "" && !string.includes("#") && !string.includes(",,"))
-        .map(string => string.slice(0, -1))
+        .filter(string => string.trim() && !string.startsWith("#"))
         .map(string => string.split(","))
         .map(array => ({
             x: array[0],
@@ -76,7 +75,10 @@ function getCSV(data) {
     return (text) => {
 
         let reg = new RegExp(Object.keys(cities).join('|'), 'g');
-        return text.replace(reg, city => `${city} (${cities[city].rating} місце в ТОП-10 найбільших міст України, населення ${cities[city].population} ${textEnding(cities[city].population)})`);
+        return text.replace(reg, city => {
+            let { population: population, rating: rating } = cities[city];
+            return `${city} (${rating} місце в ТОП-10 найбільших міст України, населення ${population} ${textEnding(population)})`
+        });
 
     };
 
